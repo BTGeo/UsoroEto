@@ -626,6 +626,7 @@ $('#loginForm').addEventListener('submit', async function(e) {
   btn.textContent = 'Sign In';
 
   if (error) {
+    $('#loginError').textContent = error.message || 'Unable to sign in.';
     $('#loginError').classList.add('show');
     return;
   }
