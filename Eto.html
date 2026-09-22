@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Ètó</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+  :root {
+    /* Earthy Maximalist Nigerian Palette */
+    --indigo-deep: #1A233A;
+    --indigo-light: #2A3A5C;
+    --terracotta: #C05621;
+    --terracotta-dark: #9A3E12;
+    --gold: #D4AF37;
+    --gold-dim: #B5952F;
+    --forest: #2D5A27;
+    --clay: #8B5A2B;
+    --cream: #F5F0E6;
+    --cream-dark: #E8DFD0;
+    --text-main: #1A1512;
+    --text-muted: #5C4D3C;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  
+  body {
+    margin: 0;
+    font-family: 'IBM Plex Sans', sans-serif;
+    /* Rich, woven Adire-inspired background pattern */
+    background-color: var(--indigo-deep);
+    background-image:
+      repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(212, 175, 55, 0.04) 10px, rgba(212, 175, 55, 0.04) 20px),
+      repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(42, 58, 92, 0.6) 10px, rgba(42, 58, 92, 0.6) 20px),
+      radial-gradient(circle at 50% 50%, rgba(192, 86, 33, 0.1) 0%, transparent 60%);
+    background-attachment: fixed;
+    color: var(--text-main);
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  /* --- Maximalist Card Styling --- */
+  .auth-card, .section-card, .module-block {
+    background: var(--cream);
+    border: 2px solid var(--gold);
+    box-shadow: 6px 6px 0px var(--indigo-light);
+    position: relative;
+    padding: 32px 28px;
+  }
+  
+  /* Decorative corner brackets for maximalist framing */
+  .auth-card::before, .section-card::before, .module-block::before {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px;
+    width: 16px; height: 16px;
+    border-top: 3px solid var(--terracotta);
+    border-left: 3px solid var(--terracotta);
+  }
+  .auth-card::after, .section-card::after, .module-block::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; right: -2px;
+    width: 16px; height: 16px;
+    border-bottom: 3px solid var(--terracotta);
+    border-right: 3px solid var(--terracotta);
+  }
+
+  .auth-card { width: 100%; max-width: 400px; padding: 40px 32px 34px; }
+  .auth-card.wide { max-width: 500px; }
+
+  /* --- Typography & Flourishes --- */
+  .auth-title {
+    font-family: 'Fraunces', serif;
+    font-size: 42px;
+    font-weight: 900;
+    text-align: center;
+    margin: 0 0 4px;
+    color: var(--indigo-deep);
+    letter-spacing: -0.02em;
+  }
+  .auth-flourish { display: block; margin: 0 auto 16px; color: var(--terracotta); }
+  .auth-subtitle {
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    text-align: center;
+    font-size: 22px;
+    color: var(--terracotta);
+    margin: 0 0 32px;
+  }
+
+  /* --- Forms & Inputs --- */
+  .field { margin-bottom: 20px; }
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .field input {
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid var(--gold-dim);
+    background: transparent;
+    padding: 12px 4px;
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    color: var(--text-main);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field input:focus { border-bottom-color: var(--terracotta); }
+  .field input::placeholder { color: var(--text-muted); opacity: 0.6; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; }
+
+  /* --- Buttons (Tactile, Stamped-Clay Feel) --- */
+  .btn {
+    width: 100%;
+    background: var(--terracotta);
+    color: var(--cream);
+    border: 2px solid var(--gold);
+    padding: 14px;
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    margin-top: 12px;
+    box-shadow: 4px 4px 0px var(--indigo-deep);
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px var(--indigo-deep); }
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: 2px 2px 0px var(--indigo-deep); }
+
+  .toggle-row {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 14px;
+    color: var(--text-muted);
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .toggle-row button {
+    background: none;
+    border: none;
+    color: var(--terracotta);
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  .message {
+    padding: 12px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    text-align: center;
+    font-weight: 600;
+    display: none;
+    border-left: 4px solid;
+  }
+  .message.show { display: block; }
+  .message.error { background: #f5e3e0; border-left-color: var(--terracotta); color: var(--terracotta-dark); }
+  .message.success { background: #e6ecdf; border-left-color: var(--forest); color: var(--forest); }
+
+  /* --- Home Dashboard --- */
+  body.home-mode { align-items: flex-start; padding: 0; }
+  .home-wrap { width: 100%; max-width: 720px; margin: 0 auto; padding: max(24px, env(safe-area-inset-top)) 20px 60px; }
+  
+  .home-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+  .home-title { font-family: 'Fraunces', serif; font-size: 48px; font-weight: 900; color: var(--cream); letter-spacing: -0.02em; text-shadow: 2px 2px 0px rgba(0,0,0,0.3); }
+  
+  .date-stamp {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 14px;
+    color: var(--gold);
+    background: var(--terracotta);
+    border: 2px solid var(--gold);
+    width: 70px; height: 70px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+    line-height: 1.1;
+    transform: rotate(-6deg);
+    flex-shrink: 0;
+    box-shadow: 3px 3px 0px var(--indigo-deep);
+  }
+  .date-stamp br { margin-bottom: 2px; }
+
+  .logout-link { 
+    background: rgba(245, 240, 230, 0.1); 
+    border: 1px solid var(--gold-dim); 
+    color: var(--gold); 
+    padding: 6px 12px;
+    font-size: 11px; 
+    font-weight: 700; 
+    cursor: pointer; 
+    text-transform: uppercase; 
+    letter-spacing: 0.1em; 
+    font-family: 'IBM Plex Mono', monospace;
+    transition: all 0.2s;
+  }
+  .logout-link:hover { background: var(--gold); color: var(--indigo-deep); }
+
+  .home-date { font-size: 14px; color: var(--cream-dark); margin-bottom: 24px; font-family: 'IBM Plex Mono', monospace; opacity: 0.8; }
+
+  /* --- Navigation Strip --- */
+  .nav-strip-wrap { position: relative; margin-bottom: 28px; }
+  .nav-strip-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 4px;
+    width: 40px;
+    background: linear-gradient(to right, transparent, var(--indigo-deep));
+    pointer-events: none;
+  }
+  .nav-strip { display: flex; gap: 10px; overflow-x: auto; padding: 8px 4px 12px; margin-bottom: 0; scrollbar-width: thin; scrollbar-color: var(--terracotta) var(--indigo-deep); }
+  .nav-strip::-webkit-scrollbar { height: 6px; }
+  .nav-strip::-webkit-scrollbar-track { background: var(--indigo-deep); }
+  .nav-strip::-webkit-scrollbar-thumb { background: var(--terracotta); border-radius: 3px; }
+  
+  .nav-chip {
+    flex-shrink: 0;
+    padding: 10px 18px;
+    border: 1px solid var(--gold);
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--cream);
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 3px 3px 0px rgba(0,0,0,0.4);
+    transition: transform 0.1s;
+  }
+  .nav-chip:nth-child(odd) { transform: translateY(-3px); }
+  .nav-chip:active { transform: translateY(1px) translateX(1px); box-shadow: 1px 1px 0px rgba(0,0,0,0.4); }
+
+  /* --- Section Cards --- */
+  .section-card { margin-bottom: 20px; padding: 24px; }
+  .section-title { 
+    font-family: 'Fraunces', serif; 
+    font-size: 20px; 
+    font-weight: 900; 
+    margin-bottom: 16px; 
+    color: var(--indigo-deep);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--gold) 0, var(--gold) 4px, transparent 4px, transparent 8px);
+    opacity: 0.5;
+  }
+
+  /* --- Calendar Strip --- */
+  .cal-strip { display: flex; gap: 8px; }
+  .cal-day { 
+    flex: 1; 
+    border: 1px solid var(--gold-dim); 
+    background: var(--cream-dark);
+    padding: 12px 4px; 
+    text-align: center; 
+    transition: all 0.2s;
+  }
+  .cal-day.is-today { 
+    background: var(--terracotta); 
+    border-color: var(--gold); 
+    box-shadow: 2px 2px 0px var(--indigo-deep);
+    transform: translateY(-2px);
+  }
+  .cal-day .dow { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .cal-day.is-today .dow { color: var(--gold); }
+  .cal-day .dnum { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 900; margin-top: 4px; color: var(--indigo-deep); }
+  .cal-day.is-today .dnum { color: var(--cream); }
+
+  /* --- Tasks & Lists --- */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+  .task-item, .item-row, .cat-row { 
+    display: flex; 
+    align-items: flex-start; 
+    gap: 12px; 
+    padding: 12px 0; 
+    border-bottom: 1px dashed var(--gold-dim); 
+    cursor: pointer; 
+    text-align: left; 
+    transition: background 0.2s;
+  }
+  .task-item:last-child, .item-row:last-child, .cat-row:last-child { border-bottom: none; }
+  .task-item:hover, .item-row:hover { background: rgba(212, 175, 55, 0.1); margin: 0 -8px; padding-left: 8px; padding-right: 8px; border-radius: 4px; }
+
+  .task-checkbox, .item-checkbox, .test-checkbox { 
+    width: 20px; height: 20px; 
+    border: 2px solid var(--clay); 
+    background: var(--cream);
+    flex-shrink: 0; 
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: var(--cream);
+    transition: all 0.2s;
+  }
+  .task-checkbox.checked, .item-checkbox.checked, .test-checkbox.checked { 
+    background: var(--forest); 
+    border-color: var(--forest); 
+    color: var(--gold);
+    box-shadow: inset 0 0 4px rgba(0,0,0,0.3);
+  }
+
+  .task-label, .item-label { font-size: 14.5px; line-height: 1.5; color: var(--text-main); font-weight: 500; }
+  .task-label.done, .item-label.done { text-decoration: line-through; color: var(--text-muted); opacity: 0.7; }
+  .task-cat { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--terracotta); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; font-weight: 600; }
+
+  /* --- Quotes & Plants --- */
+  .quote-card-inner { position: relative; padding: 12px 4px 12px 24px; }
+  .quote-mark { position: absolute; top: -16px; left: -8px; font-family: 'Fraunces', serif; font-size: 72px; color: var(--terracotta); opacity: 0.2; font-weight: 900; line-height: 1; pointer-events: none; }
+  .quote-text { font-family: 'Fraunces', serif; font-style: italic; font-size: 17px; line-height: 1.6; color: var(--indigo-deep); position: relative; }
+  
+  .plant-name { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 900; margin-bottom: 4px; color: var(--forest); }
+  .plant-meta { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .plant-tip { font-size: 14px; line-height: 1.6; color: var(--text-main); margin-top: 8px; border-left: 2px solid var(--gold); padding-left: 12px; }
+  
+  .leaf-corner { position: absolute; top: -1px; right: 8px; width: 32px; height: 32px; opacity: 0.6; pointer-events: none; color: var(--forest); }
+
+  /* --- Category Page --- */
+  .cat-page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .back-link { 
+    background: none; border: none; color: var(--gold); font-size: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.1em; font-family: 'IBM Plex Mono', monospace; padding: 0; 
+    display: flex; align-items: center; gap: 6px;
+  }
+  .back-link:hover { color: var(--cream); }
+  
+  .cat-page-title { 
+    font-family: 'Fraunces', serif; 
+    font-size: 36px; 
+    font-weight: 900; 
+    margin: 12px 0 28px; 
+    padding-bottom: 12px; 
+    color: var(--cream);
+    border-bottom: 3px double var(--cat-accent, var(--gold)); 
+  }
+  
+  .module-block { margin-bottom: 16px; padding: 20px; background: var(--cream); border-left: 4px solid var(--cat-accent, var(--terracotta)); }
+  .module-title { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 900; margin-bottom: 14px; color: var(--indigo-deep); }
+
+  .inline-add-row { display: flex; gap: 8px; margin-top: 14px; }
+  .inline-add-row input { 
+    flex: 1; 
+    border: 1px solid var(--gold-dim); 
+    background: var(--cream); 
+    padding: 10px 12px; 
+    font-family: 'IBM Plex Sans', sans-serif; 
+    font-size: 14px; 
+    outline: none; 
+    color: var(--text-main);
+  }
+  .inline-add-row input:focus { border-color: var(--terracotta); background: #fff; }
+  .inline-add-btn { 
+    border: 2px solid var(--cat-accent, var(--terracotta)); 
+    background: var(--cream); 
+    color: var(--cat-accent, var(--terracotta)); 
+    font-weight: 900; 
+    font-size: 18px; 
+    width: 40px; 
+    cursor: pointer; 
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .inline-add-btn:hover { background: var(--cat-accent, var(--terracotta)); color: var(--cream); }
+
+  .log-entry { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px dashed var(--gold-dim); }
+  .log-entry:last-child { border-bottom: none; }
+  .log-date { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--terracotta); display: block; margin-bottom: 4px; font-weight: 600; }
+  .log-text { font-size: 14px; color: var(--text-main); line-height: 1.5; }
+  .log-delete { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 18px; padding: 0 6px; transition: color 0.2s; }
+  .log-delete:hover { color: var(--terracotta); }
+
+  .num-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .num-row input { width: 80px; border: 1px solid var(--gold-dim); background: var(--cream); padding: 8px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 14px; outline: none; color: var(--text-main); }
+  .num-track { height: 8px; background: var(--cream-dark); flex: 1; border: 1px solid var(--gold-dim); }
+  .num-fill { height: 100%; background: var(--cat-accent, var(--forest)); transition: width 0.3s ease; }
+  
+  .placeholder-note { font-size: 13px; color: var(--text-muted); font-style: italic; padding: 12px 0; }
+  
+  .deadline-overdue { color: var(--terracotta); font-weight: 700; }
+  .deadline-today { color: var(--terracotta); font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; }
+  .deadline-soon { color: var(--forest); font-weight: 700; }
+
+  .save-indicator, #catSaveIndicator { 
+    font-family: 'IBM Plex Mono', monospace; 
+    font-size: 11px; 
+    color: var(--gold); 
+    margin-top: 12px; 
+    text-align: right; 
+    min-height: 14px; 
+    letter-spacing: 0.05em;
+  }
+</style>
+</head>
+<body>
+
+<!-- HOME DASHBOARD -->
+<div class="home-wrap" id="homeWrap" style="display:none;">
+  <div class="home-header">
+    <div class="home-title">Ètó</div>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <button class="logout-link" onclick="logout()">Log out</button>
+      <div class="date-stamp" id="dateStamp"></div>
+    </div>
+  </div>
+  <div class="home-date" id="homeDate"></div>
+
+  <div class="nav-strip-wrap"><div class="nav-strip" id="navStrip"></div></div>
+
+  <div class="section-card">
+    <div class="section-title">This week</div>
+    <div class="cal-strip" id="calStrip"></div>
+  </div>
+
+  <div class="two-col">
+    <div class="section-card">
+      <div class="section-title">Task for Today</div>
+      <div id="taskList"></div>
+    </div>
+    <div>
+      <div class="section-card">
+        <div class="section-title">Daily Quote</div>
+        <div class="quote-card-inner">
+          <span class="quote-mark">"</span>
+          <div class="quote-text" id="quoteText"></div>
+        </div>
+      </div>
+      <div class="section-card">
+        <svg class="leaf-corner" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 28 Q 4 12, 28 4 Q 22 20, 4 28Z" />
+        </svg>
+        <div class="section-title">Plant of the Day</div>
+        <div id="plantOfDay"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-indicator" id="saveIndicator"></div>
+</div>
+
+<!-- CATEGORY PAGE -->
+<div class="home-wrap" id="categoryPage" style="display:none;">
+  <div class="cat-page-header">
+    <button class="back-link" onclick="backToHome()">← All categories</button>
+    <button class="logout-link" onclick="logout()">Log out</button>
+  </div>
+  <div class="cat-page-title" id="catPageTitle">—</div>
+  <div id="catModules"></div>
+  <div class="save-indicator" id="catSaveIndicator"></div>
+</div>
+
+<script>
+const $ = sel => document.querySelector(sel);
+
+const SUPABASE_URL = 'https://ohxgihtoouklwhiouxjn.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable__YXPoIUTnVYpb6DUsvaVpA_mcvGHv2D';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const PAGE_EMAILS = {
+  uggs: ['hayati@hayati.internal', 'ogooma@fieldledger.internal'],
+  eto: 'tomi@fieldledger.internal'
+};
+const LOGIN_PAGE = 'index.html';
+
+let mode = 'signin';
+let ledgerData = null;
+const LEDGER_KEY = 'field-ledger-data';
+
+const CATEGORY_ORDER = ['languages', 'fitness', 'budgeting', 'academics', 'business', 'journal', 'gardening', 'travel'];
+
+// Updated to Earthy Maximalist Nigerian Palette
+const CATEGORY_COLORS = {
+  languages: '#2A3A5C',   // Adire Indigo
+  fitness: '#C05621',     // Burnt Terracotta
+  budgeting: '#D4AF37',   // Rich Gold/Ochre
+  academics: '#2D5A27',   // Forest Green
+  business: '#5C2A42',    // Deep Plum
+  journal: '#8B5A2B',     // Warm Clay
+  gardening: '#4A6741',   // Sage/Leaf Green
+  travel: '#1A4A4A'       // Deep Teal
+};
+
+const DAILY_QUOTES = [
+  "A ledger kept daily needs no memory, only honesty.",
+  "Small entries, written often, outweigh grand entries written never.",
+  "The garden and the budget grow by the same law: little, and often.",
+  "What you track, you tend. What you tend, grows.",
+  "Progress rarely announces itself. It just quietly checks a box.",
+  "A page left blank teaches nothing. A page filled badly still teaches something.",
+  "You don't need to feel ready to write today's line — you just need to write it.",
+  "Discipline is a plant too. It wilts if you stop watering it.",
+  "The ledger doesn't ask for perfection. It asks for return."
+];
+
+const PLANT_ALMANAC = [
+  { name: 'Snake Plant', scientificName: 'Dracaena trifasciata', type: 'Succulent', fact: 'One of the most tolerant houseplants — it stores water in its thick leaves and can go three or more weeks without watering.' },
+  { name: 'Pothos', scientificName: 'Epipremnum aureum', type: 'Vine', fact: 'Grows equally well in soil or a jar of water, and a single cutting can root and become a whole new plant in a few weeks.' },
+  { name: 'Basil', scientificName: 'Ocimum basilicum', type: 'Herb', fact: 'Pinching off the top of a basil stem encourages it to branch out and produce far more leaves than if left alone.' },
+  { name: 'Aloe Vera', scientificName: 'Aloe vera', type: 'Succulent', fact: 'The gel inside its leaves is mostly water, which is why the plant can survive long dry spells between waterings.' },
+  { name: 'Tomato', scientificName: 'Solanum lycopersicum', type: 'Vegetable (fruit)', fact: 'Botanically a fruit, not a vegetable — it develops from the flower and contains seeds.' },
+  { name: 'Lavender', scientificName: 'Lavandula', type: 'Flowering shrub', fact: 'Prefers poor, well-drained soil — overly rich or wet soil is one of the most common reasons it fails to thrive.' },
+  { name: 'Spider Plant', scientificName: 'Chlorophytum comosum', type: 'Perennial', fact: 'Sends out long shoots with baby plantlets on the end, which can be snipped off and potted to grow new spider plants.' },
+  { name: 'Mint', scientificName: 'Mentha', type: 'Herb', fact: 'Spreads aggressively through underground runners, so it is usually best kept in its own container rather than an open garden bed.' },
+  { name: 'Marigold', scientificName: 'Tagetes', type: 'Flowering annual', fact: 'Often planted alongside vegetables because its scent is believed to help deter certain garden pests.' },
+  { name: 'Peace Lily', scientificName: 'Spathiphyllum', type: 'Flowering perennial', fact: 'Its leaves droop noticeably when it needs water, making it one of the easier plants to read.' },
+  { name: 'Rosemary', scientificName: 'Salvia rosmarinus', type: 'Herb (shrub)', fact: 'A Mediterranean native that prefers to dry out fully between waterings — overwatering is a bigger risk to it than underwatering.' },
+  { name: 'Echeveria', scientificName: 'Echeveria', type: 'Succulent', fact: 'Its rosette shape helps channel rain and dew toward the center of the plant and down to its roots.' }
+];
+
+const DATA_VERSION = 5;
+
+const DEFAULT_DATA = {
+  version: DATA_VERSION,
+  categories: [
+    { id: 'languages', name: 'Languages', modules: [
+      { id: 'yoruba', title: 'Yoruba — Refinement (by month)', type: 'checklist', items: [
+        { id: 'yo1', label: 'Month 1: Tone marks — read & write with full diacritics', done: false, weekStart: 1, weekEnd: 4 },
+        { id: 'yo2', label: 'Month 1: Learn 20–30 proverbs (òwe)', done: false, weekStart: 1, weekEnd: 4 },
+        { id: 'yo3', label: 'Month 2: Read Yoruba news or literature', done: false, weekStart: 5, weekEnd: 8 },
+        { id: 'yo4', label: 'Month 2: Study verb serialization', done: false, weekStart: 5, weekEnd: 8 },
+        { id: 'yo5', label: 'Month 3: Learn regional dialect differences', done: false, weekStart: 9, weekEnd: 12 },
+        { id: 'yo6', label: 'Month 3: Build professional/academic vocabulary', done: false, weekStart: 9, weekEnd: 12 }
+      ]},
+      { id: 'yoruba-log', title: 'Yoruba — Notes & Reflection', type: 'log', entries: [] },
+      { id: 'igbo', title: 'Igbo — Foundations (by week)', type: 'checklist', items: [
+        { id: 'ig1', label: 'Week 1–2: Learn the alphabet, vowel sounds & vowel harmony', done: false, weekStart: 1, weekEnd: 2 },
+        { id: 'ig2', label: 'Week 1–2: Practice basic tone patterns (high / low / downstep)', done: false, weekStart: 1, weekEnd: 2 },
+        { id: 'ig3', label: 'Week 3: Greetings & everyday courtesy phrases', done: false, weekStart: 3, weekEnd: 3 },
+        { id: 'ig4', label: 'Week 3: Introduce yourself — name, origin, family', done: false, weekStart: 3, weekEnd: 3 },
+        { id: 'ig5', label: 'Week 4: Personal pronouns & basic sentence structure (SVO)', done: false, weekStart: 4, weekEnd: 4 },
+        { id: 'ig6', label: 'Week 5: Present tense verbs', done: false, weekStart: 5, weekEnd: 5 },
+        { id: 'ig7', label: 'Week 6: Past & future tense', done: false, weekStart: 6, weekEnd: 6 },
+        { id: 'ig8', label: 'Week 7: Core vocabulary — family, food, numbers', done: false, weekStart: 7, weekEnd: 7 },
+        { id: 'ig9', label: 'Week 8: Question formation & negation', done: false, weekStart: 8, weekEnd: 8 },
+        { id: 'ig10', label: 'Week 9–10: First real conversation with a tutor', done: false, weekStart: 9, weekEnd: 10 }
+      ]},
+      { id: 'igbo-log', title: 'Igbo — Notes & Reflection', type: 'log', entries: [] },
+      { id: 'french', title: 'French — CEFR Path (by week)', type: 'checklist', items: [
+        { id: 'fr1', label: 'Weeks 1–3 (A1): Pronunciation, être/avoir, articles', done: false, weekStart: 1, weekEnd: 3 },
+        { id: 'fr2', label: 'Weeks 4–6 (A1–A2): Regular -er/-ir/-re verb conjugation', done: false, weekStart: 4, weekEnd: 6 },
+        { id: 'fr3', label: 'Weeks 7–9 (A2): Passé composé & futur proche', done: false, weekStart: 7, weekEnd: 9 },
+        { id: 'fr4', label: 'Weeks 10–12 (A2–B1): Imparfait & reflexive verbs', done: false, weekStart: 10, weekEnd: 12 },
+        { id: 'fr5', label: 'Weeks 13–16 (B1): Subjunctive & conditional', done: false, weekStart: 13, weekEnd: 16 },
+        { id: 'fr6', label: 'Weeks 17–20 (B2): Reading news, writing essays', done: false, weekStart: 17, weekEnd: 20 }
+      ]},
+      { id: 'french-log', title: 'French — Notes & Reflection', type: 'log', entries: [] }
+    ]},
+    { id: 'fitness', name: 'Fitness', modules: [
+      { id: 'day-a', title: 'Day A — Lower Body & Knee Stability', type: 'checklist', scheduledDow: [1], items: [
+        { id: 'a1', label: 'Broad jumps + lateral bounds', done: false },
+        { id: 'a2', label: 'Bulgarian split squats', done: false },
+        { id: 'a3', label: 'Eccentric step-downs', done: false },
+        { id: 'a4', label: 'Tibialis raises + wall sit', done: false }
+      ]},
+      { id: 'day-b', title: 'Day B — Upper Body Push/Pull + Core', type: 'checklist', scheduledDow: [2], items: [
+        { id: 'b1', label: 'Plyo push-ups', done: false },
+        { id: 'b2', label: 'Archer push-ups + pike push-ups', done: false },
+        { id: 'b3', label: 'Wall-assisted handstand hold', done: false },
+        { id: 'b4', label: 'Dragon flag negatives + side plank', done: false }
+      ]},
+      { id: 'day-c', title: 'Day C — Balance & Unilateral Strength', type: 'checklist', scheduledDow: [4], items: [
+        { id: 'c1', label: 'Single-leg balance holds', done: false },
+        { id: 'c2', label: 'Single-leg RDL + glute bridge', done: false },
+        { id: 'c3', label: 'Cossack squats', done: false },
+        { id: 'c4', label: 'Single-leg deadbug', done: false }
+      ]},
+      { id: 'day-d', title: 'Day D — Full-Body Plyometric + Core', type: 'checklist', scheduledDow: [5], items: [
+        { id: 'd1', label: 'Plyo circuit (3 rounds)', done: false },
+        { id: 'd2', label: 'Depth drops to stick', done: false },
+        { id: 'd3', label: 'Nordic curl negatives', done: false },
+        { id: 'd4', label: 'Hollow rocks + V-ups', done: false }
+      ]},
+      { id: 'fit-log', title: 'Training Log', type: 'log', entries: [] }
+    ]},
+    { id: 'budgeting', name: 'Savings / Budgeting', modules: [
+      { id: 'pay-calc', title: 'Weekly Pay Calculator', type: 'paycalc', hours: 0, rate: 0, taxRate: 0 },
+      { id: 'savings-goal', title: 'Savings Goal', type: 'numeric', current: 0, target: 1000 },
+      { id: 'travel-fund', title: 'Travel Fund', type: 'numeric', current: 0, target: 500 },
+      { id: 'gift-fund', title: 'Gift Fund', type: 'numeric', current: 0, target: 200 },
+      { id: 'habits', title: 'Money Habits', type: 'checklist', items: [
+        { id: 'm1', label: 'Track every expense this week', done: false },
+        { id: 'm2', label: 'Review subscriptions', done: false },
+        { id: 'm3', label: 'Pay yourself first (auto-transfer to savings)', done: false },
+        { id: 'm4', label: 'Check budget vs. actual spend', done: false }
+      ]},
+      { id: 'budget-log', title: 'Budget Log', type: 'log', entries: [] }
+    ]},
+    { id: 'academics', name: 'Academics', modules: [
+      { id: 'courses', title: 'Courses', type: 'checklist', items: [] },
+      { id: 'deadlines', title: 'Assignments, Exams & Projects', type: 'deadlines', entries: [] },
+      { id: 'study-log', title: 'Study Log', type: 'log', entries: [] }
+    ]},
+    { id: 'business', name: 'Business Plan', modules: [
+      { id: 'foundations', title: 'Foundations', type: 'checklist', items: [
+        { id: 'bp1', label: 'Validate the idea / talk to potential customers', done: false },
+        { id: 'bp2', label: 'Define target market', done: false },
+        { id: 'bp3', label: 'Competitive analysis', done: false },
+        { id: 'bp4', label: 'Value proposition & business model', done: false },
+        { id: 'bp5', label: 'Choose legal structure', done: false }
+      ]},
+      { id: 'launch', title: 'Launch', type: 'checklist', items: [
+        { id: 'bp6', label: 'Branding & name', done: false },
+        { id: 'bp7', label: 'Simple website or landing page', done: false },
+        { id: 'bp8', label: 'Pricing decided', done: false },
+        { id: 'bp9', label: 'First 3 customers or users', done: false }
+      ]},
+      { id: 'business-log', title: 'Planning Notes', type: 'log', entries: [] }
+    ]},
+    { id: 'journal', name: 'Journal', modules: [
+      { id: 'entries', title: 'Daily Entries', type: 'log', entries: [] }
+    ]},
+    { id: 'gardening', name: 'Gardening', modules: [
+      { id: 'plant-tracker', title: 'My Plants', type: 'plants', plants: [] },
+      { id: 'seasonal', title: 'Seasonal Tasks', type: 'checklist', items: [
+        { id: 'g1', label: 'Prep soil / beds', done: false },
+        { id: 'g2', label: 'Plant for the season', done: false },
+        { id: 'g3', label: 'Set watering schedule', done: false },
+        { id: 'g4', label: 'Pest & disease check', done: false },
+        { id: 'g5', label: 'Harvest / prune as needed', done: false }
+      ]},
+      { id: 'plant-log', title: 'Plant Log', type: 'log', entries: [] }
+    ]},
+    { id: 'travel', name: 'Travel & Planning', modules: [
+      { id: 'trip-checklist', title: 'Trip Checklist', type: 'checklist', items: [
+        { id: 't1', label: 'Passport / documents valid', done: false },
+        { id: 't2', label: 'Flights & lodging booked', done: false },
+        { id: 't3', label: 'Itinerary drafted', done: false },
+        { id: 't4', label: 'Packing list ready', done: false }
+      ]},
+      { id: 'travel-log', title: 'Travel Log', type: 'log', entries: [] }
+    ]}
+  ]
+};
+
+async function enterApp() {
+  $('#homeWrap').style.display = 'block';
+  document.body.classList.add('home-mode');
+  await loadLedger();
+}
+
+async function loadLedger() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return;
+
+  const { data, error } = await sb
+    .from('app_data')
+    .select('value')
+    .eq('user_id', user.id)
+    .eq('key', LEDGER_KEY)
+    .maybeSingle();
+
+  if (error) {
+    $('#saveIndicator').textContent = 'Load failed: ' + error.message;
+    return;
+  }
+
+  if (data && data.value && data.value.version === DATA_VERSION) {
+    ledgerData = data.value;
+  } else {
+    ledgerData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    await persistLedger();
+  }
+
+  renderHome();
+}
+
+async function persistLedger() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return;
+  const indicator = $('#saveIndicator');
+  indicator.textContent = 'Saving…';
+  const { error } = await sb.from('app_data').upsert({
+    user_id: user.id,
+    key: LEDGER_KEY,
+    value: ledgerData,
+    updated_at: new Date().toISOString()
+  });
+  indicator.textContent = error ? ('Save failed: ' + error.message) : 'Saved ✓';
+  if (!error) setTimeout(() => { if (indicator.textContent === 'Saved ✓') indicator.textContent = ''; }, 2000);
+}
+
+function renderHome() {
+  const now = new Date();
+  $('#homeDate').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  const dow = now.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+  $('#dateStamp').innerHTML = `${dow}<br>${now.getDate()}`;
+  renderNavStrip();
+  renderCalStrip();
+  renderTaskList();
+  renderQuote();
+  renderPlantOfDay();
+}
+
+function renderNavStrip() {
+  const strip = $('#navStrip');
+  strip.innerHTML = ledgerData.categories
+    .sort((a, b) => CATEGORY_ORDER.indexOf(a.id) - CATEGORY_ORDER.indexOf(b.id))
+    .map(cat => `<button class="nav-chip" style="background-color:${CATEGORY_COLORS[cat.id] || '#6B5A44'};" onclick="navClick('${cat.id}')">${cat.name}</button>`)
+    .join('');
+}
+
+function navClick(catId) {
+  openCategory(catId);
+}
+
+let currentCategoryId = null;
+
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function openCategory(catId) {
+  currentCategoryId = catId;
+  $('#categoryPage').style.setProperty('--cat-accent', CATEGORY_COLORS[catId] || '#C05621');
+  $('#homeWrap').style.display = 'none';
+  $('#categoryPage').style.display = 'block';
+  renderCategoryPage();
+}
+
+function backToHome() {
+  currentCategoryId = null;
+  $('#categoryPage').style.display = 'none';
+  $('#homeWrap').style.display = 'block';
+  renderHome();
+}
+
+function getCurrentCategory() {
+  return ledgerData.categories.find(c => c.id === currentCategoryId);
+}
+
+function renderCategoryPage() {
+  const cat = getCurrentCategory();
+  $('#catPageTitle').textContent = cat.name;
+  let html = cat.modules.map(mod => renderModuleHTML(mod)).join('');
+  if (cat.id === 'budgeting') html += renderAddGoalForm();
+  $('#catModules').innerHTML = html;
+}
+
+function renderModuleHTML(mod) {
+  if (mod.type === 'checklist') return renderChecklistModule(mod);
+  if (mod.type === 'log') return renderLogModule(mod);
+  if (mod.type === 'numeric') return renderNumericModule(mod);
+  if (mod.type === 'deadlines') return renderDeadlinesModule(mod);
+  if (mod.type === 'paycalc') return renderPaycalcModule(mod);
+  if (mod.type === 'plants') return renderPlantsModule(mod);
+  return '';
+}
+
+function renderChecklistModule(mod) {
+  const rows = mod.items.map(item => `
+    <div class="item-row" onclick="toggleChecklistItem('${mod.id}','${item.id}')">
+      <div class="item-checkbox ${item.done ? 'checked' : ''}">${item.done ? '✓' : ''}</div>
+      <div class="item-label ${item.done ? 'done' : ''}">${item.label}</div>
+    </div>`).join('');
+  return `<div class="module-block">
+    <div class="module-title">${mod.title}</div>
+    ${rows}
+    <div class="inline-add-row">
+      <input type="text" id="add-item-${mod.id}" placeholder="Add an item…" onkeydown="if(event.key==='Enter') addChecklistItem('${mod.id}')">
+      <button class="inline-add-btn" onclick="addChecklistItem('${mod.id}')">+</button>
+    </div>
+  </div>`;
+}
+
+function renderLogModule(mod) {
+  const entries = (mod.entries || []).map(e => `
+    <div class="log-entry">
+      <div><span class="log-date">${e.date}</span><span class="log-text">${e.text}</span></div>
+      <button class="log-delete" onclick="deleteLogEntry('${mod.id}','${e.id}')">×</button>
+    </div>`).join('');
+  return `<div class="module-block">
+    <div class="module-title">${mod.title}</div>
+    <div class="inline-add-row" style="margin-top:0; margin-bottom:10px;">
+      <input type="text" id="add-log-${mod.id}" placeholder="Write an entry…" onkeydown="if(event.key==='Enter') addLogEntry('${mod.id}')">
+      <button class="inline-add-btn" onclick="addLogEntry('${mod.id}')">+</button>
+    </div>
+    ${entries || '<div class="placeholder-note">No entries yet.</div>'}
+  </div>`;
+}
+
+function renderNumericModule(mod) {
+  const pct = mod.target > 0 ? Math.min(100, (mod.current / mod.target) * 100) : 0;
+  return `<div class="module-block">
+    <div class="module-title">${mod.title} ${mod.custom ? `<button class="log-delete" style="font-size:12px; float:right;" onclick="deleteGoal('${mod.id}')">remove</button>` : ''}</div>
+    <div class="num-row">
+      <input type="number" id="num-current-${mod.id}" value="${mod.current}" onchange="updateNumeric('${mod.id}','current',this.value)">
+      <span style="color:var(--text-muted); font-size:13px; font-weight:600;">of</span>
+      <input type="number" id="num-target-${mod.id}" value="${mod.target}" onchange="updateNumeric('${mod.id}','target',this.value)">
+      <div class="num-track"><div class="num-fill" style="width:${pct}%;"></div></div>
+    </div>
+  </div>`;
+}
+
+function renderPaycalcModule(mod) {
+  const gross = (mod.hours || 0) * (mod.rate || 0);
+  const tax = gross * ((mod.taxRate || 0) / 100);
+  const net = gross - tax;
+  return `<div class="module-block">
+    <div class="module-title">${mod.title}</div>
+    <div style="display:flex; gap:8px; margin-bottom:10px;">
+      <label style="flex:1; font-size:11px; color:var(--text-muted); font-family:'IBM Plex Mono',monospace; text-transform:uppercase; font-weight:700;">Hours
+        <input type="number" value="${mod.hours}" onchange="updateNumeric('${mod.id}','hours',this.value)" style="width:100%; margin-top:4px;">
+      </label>
+      <label style="flex:1; font-size:11px; color:var(--text-muted); font-family:'IBM Plex Mono',monospace; text-transform:uppercase; font-weight:700;">Rate ($)
+        <input type="number" value="${mod.rate}" onchange="updateNumeric('${mod.id}','rate',this.value)" style="width:100%; margin-top:4px;">
+      </label>
+      <label style="flex:1; font-size:11px; color:var(--text-muted); font-family:'IBM Plex Mono',monospace; text-transform:uppercase; font-weight:700;">Tax (%)
+        <input type="number" value="${mod.taxRate}" onchange="updateNumeric('${mod.id}','taxRate',this.value)" style="width:100%; margin-top:4px;">
+      </label>
+    </div>
+    <div style="display:flex; justify-content:space-between; background:var(--cream-dark); padding:12px; font-family:'IBM Plex Mono',monospace; font-size:14px; border: 1px solid var(--gold-dim);">
+      <span>Gross: $${gross.toFixed(2)}</span>
+      <span style="color:var(--terracotta); font-weight:700;">Tax: -$${tax.toFixed(2)}</span>
+      <span style="font-weight:900; color:var(--forest);">Net: $${net.toFixed(2)}</span>
+    </div>
+  </div>`;
+}
+
+function renderPlantsModule(mod) {
+  const plants = mod.plants || [];
+  const cards = plants.map(p => {
+    const ws = waterStatus(p);
+    const notes = (p.notes || []).map(n => `
+      <div class="log-entry" style="padding:6px 0;">
+        <div><span class="log-date">${n.date}</span><span class="log-text" style="font-size:12.5px;">${n.text}</span></div>
+        <button class="log-delete" onclick="deletePlantNote('${mod.id}','${p.id}','${n.id}')">×</button>
+      </div>`).join('');
+    return `<div class="module-block" style="border:1px solid var(--gold-dim); padding:16px; margin-bottom:12px; box-shadow: 3px 3px 0px rgba(0,0,0,0.1);">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-family:'Fraunces',serif; font-size:16px; font-weight:900; color:var(--indigo-deep);">${p.name}</span>
+          <select onchange="setPlantStatus('${mod.id}','${p.id}',this.value)" style="font-size:11px; padding:4px 8px; border:1px solid var(--gold-dim); background:var(--cream); font-family:'IBM Plex Mono',monospace; font-weight:600;">
+            ${['Healthy', 'Needs Water', 'Struggling', 'Dormant'].map(s => `<option value="${s}" ${p.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="${ws.overdue ? 'deadline-overdue' : ''}" style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700;">${ws.label}</span>
+          <button class="inline-add-btn" style="width:auto; padding:6px 12px; font-size:11px; font-weight:900;" onclick="waterPlant('${mod.id}','${p.id}')">WATER</button>
+          <button class="log-delete" onclick="deletePlant('${mod.id}','${p.id}')">×</button>
+        </div>
+      </div>
+      <div style="margin-top:12px; border-top: 1px dashed var(--gold-dim); padding-top: 12px;">
+        <div class="inline-add-row" style="margin-top:0; margin-bottom:8px;">
+          <input type="text" id="plant-note-${p.id}" placeholder="Add a note…" onkeydown="if(event.key==='Enter') addPlantNote('${mod.id}','${p.id}')" style="font-size:13px;">
+          <button class="inline-add-btn" onclick="addPlantNote('${mod.id}','${p.id}')">+</button>
+        </div>
+        ${notes}
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div class="module-block">
+    <div class="module-title">${mod.title}</div>
+    ${cards || '<div class="placeholder-note">No plants added yet.</div>'}
+    <div style="display:flex; gap:8px; margin-top:12px;">
+      <input type="text" id="new-plant-name-${mod.id}" placeholder="Plant name…" style="flex:2; border:1px solid var(--gold-dim); padding:10px 12px; font-family:inherit; font-size:14px; outline:none;">
+      <input type="number" id="new-plant-freq-${mod.id}" placeholder="Days" style="flex:1; border:1px solid var(--gold-dim); padding:10px 12px; font-family:inherit; font-size:14px; outline:none;">
+      <button class="inline-add-btn" onclick="addPlant('${mod.id}')">+</button>
+    </div>
+  </div>`;
+}
+
+function addPlant(modId) {
+  const nameInput = $(`#new-plant-name-${modId}`);
+  const freqInput = $(`#new-plant-freq-${modId}`);
+  const name = nameInput.value.trim();
+  const freq = Number(freqInput.value) || 7;
+  if (!name) return;
+  const mod = getCurrentCategory().modules.find(m => m.id === modId);
+  if (!mod.plants) mod.plants = [];
+  mod.plants.push({ id: `plant-${Date.now()}`, name, status: 'Healthy', wateringFrequencyDays: freq, lastWatered: null, notes: [] });
+  persistAndRerenderCategory();
+}
+
+function deletePlant(modId, plantId) {
+  const mod = getCurrentCategory().modules.find(m => m.id === modId);
+  mod.plants = mod.plants.filter(p => p.id !== plantId);
+  persistAndRerenderCategory();
+}
+
+function waterPlant(modId, plantId) {
+  const mod = getCurrentCategory().modules.find(m => m.id === modId);
+  const plant = mod.plants.find(p => p.id === plantId);
+  plant.lastWatered = todayStr();
+  persistAndRerenderCategory();
+}
+
+function setPlantStatus(modId, plantId, status) {
+  const mod = getCurrentCategory().modules.find(m => m.id === modId);
+  const plant = mod.plants.find(p => p.id === plantId);
+  plant.status = status;
+  persistAndRerenderCategory();
+}
+
+function addPlantNote(modId, plantId) {
+  const input = $(`#plant-note-${plantId}`);
+  const text = input.value.trim();
+  if (!text) return;
+  const mod = getCurrentCategory().modules.find(m => m.id === modId);
+  const plant = mod.plants.find(p => p.id === plantId);
+  if (!plant.notes) plant.notes = [];
+  plant.notes.unshift({ id: `note-${Date.now()}`, date: todayStr(), text });
+  persistAndRerenderCategory();
+}
+
+function deletePlantNote(modId, plantId, noteId) {
+  const mod = getCurrentCategory().modules.find(m => m.id === modId);
+  const plant = mod.plants.find(p => p.id === plantId);
+  plant.notes = plant.notes.filter(n => n.id !== noteId);
+  persistAndRerenderCategory();
+}
+
+function renderAddGoalForm() {
+  return `<div class="module-block">
+    <div class="module-title">Add another goal</div>
+    <div class="inline-add-row">
+      <input type="text" id="new-goal-name" placeholder="Goal name…" style="flex:2;">
+      <input type="number" id="new-goal-target" placeholder="Target $" style="flex:1;">
+      <button class="inline-add-btn" onclick="addSavingsGoal()">+</button>
+    </div>
+  </div>`;
+}
+
+function addSavingsGoal() {
+  const nameInput = $('#new-goal-name');
+  const targetInput = $('#new-goal-target');
+  const name = nameInput.value.trim();
+  const target = Number(targetInput.value) || 0;
+  if (!name) return;
+  const cat = getCurrentCategory();
+  cat.modules.push({ id: `goal-${Date.now()}`, title: name, type: 'numeric', current: 0, target, custom: true });
+  persistAndRerenderCategory();
+}
+
+function deleteGoal(modId) {
+  const cat = getCurrentCategory();
+  cat.modules = cat.modules.filter(m => m.id !== modId);
+  persistAndRerenderCategory();
+}
+
+const DEADLINE_TYPES = ['Assignment', 'Exam', 'Quiz', 'Project', 'Other'];
+
+function daysUntil(dueDateStr) {
+  const due = new Date(dueDateStr + 'T00:00:00');
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return Math.round((due - now) / 86400000);
+}
+
+function countdownInfo(days) {
+  if (days < 0) return { label: `Overdue by ${-days}d`, cls: 'deadline-overdue' };
+  if (days === 0) return { label: 'DUE TODAY', cls: 'deadline-today' };
+  if (days === 1) return { label: 'Due tomorrow', cls: 'deadline-soon' };
+  if (days <= 3) return { label: `Due in ${days}d`, cls: 'deadline-soon' };
+  return { label: `Due in ${days}d`, cls: '' };
+}
+
+function renderDeadlinesModule(mod) {
+  const sorted = [...(mod.entries || [])].sort((a, b) => {
+    if (!!a.done !== !!b.done) return a.done ? 1 : -1;
+    return a.dueDate.localeCompare(b.dueDate);
+  });
+  const rows = sorted.map(d => {
+    const cd = d.done ? { label: 'Completed', cls: '' } : countdownInfo(daysUntil(d.dueDate));
+    return `<div class="item-row" style="cursor:default;">
+      <div class="item-checkbox ${d.done ? 'checked' : ''}" style="cursor:pointer;" onclick="toggleDeadlineDone('${mod.id}','${d.id}')">${d.done ? '✓' : ''}</div>
+      <div style="flex:1;">
+        <div class="item-label ${d.done ? 'done' : ''}">${d.title}</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-muted); margin-top:4px; font-weight:600;">
+          ${d.course ? d.course + ' · ' : ''}${d.type} · ${d.dueDate} · <span class="${cd.cls}">${cd.label}</span>
+        </div>
+      </div>
+      <button class="log-delete" onclick="deleteDeadline('${mod.id}','${d.id}')">×</button>
+    </div>`;
+  }).join('');
+
+  return `<div class="module-block">
+    <div class="module-title">${mod.title}</div>
+    ${rows || '<div class="placeholder-note">Nothing due — add an assignment, exam, or project below.</div>'}
+    <div style="margin-top:14px; border-top: 1px dashed var(--gold-dim); padding-top: 14px;">
+      <input type="text" id="dl-title-${mod.id}" placeholder="Title (e.g. Midterm essay)" style="width:100%; margin-bottom:8px; border:1px solid var(--gold-dim); padding:10px 12px; font-family:inherit; font-size:14px; outline:none;">
+      <div style="display:flex; gap:8px; margin-bottom:8px;">
+        <input type="text" id="dl-course-${mod.id}" placeholder="Course" style="flex:1; border:1px solid var(--gold-dim); padding:10px 12px; font-family:inherit; font-size:14px; outline:none;">
+        <select id="dl-type-${mod.id}" style="flex:1; border:1px solid var(--gold-dim); padding:10px 12px; font-family:inherit; font-size:14px; outline:none; background:var(--cream);">
+          ${DEADLINE_TYPES.map(t => `<option value="${t}">${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="inline-add-row" style="margin-top:0;">
+        <input type="date" id="dl-date-${mod.id}" style="flex:1;">
+        <button class="inline-add-btn" onclick="addDeadline('${mod.id}')">+</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function addDeadline(modId) {
+  const title = $(`#dl-title-${modId}`).value.trim();
+  const course = $(`#dl-course-${modId}`).value.trim();
+  const type = $(`#dl-type-${modId}`).value;
+  const dueDate = $(`#dl-date-${modId}`).value;
+  if (!title || !dueDate) return;
+  const mod = getCurrentCategory().modules.find(m => m.id === modId);
+  if (!mod.entries) mod.entries = [];
+  mod.entries.push({ id: `${modId}-${Date.now()}`, title, course, type, dueDate, done: false });
+  persistAndRerenderCategory();
+}
+
+function toggleDeadlineDone(modId, entryId) {
+  const mod = getCurrentCategory().modules.find(m => m.id === modId);
+  const entry = mod.entries.find(e => e.id === entryId);
+  entry.done = !entry.done;
+  persistAndRerenderCategory();
+}
+
+function deleteDeadline(modId, entryId) {
+  const mod = getCurrentCategory().modules.find(m => m.id === modId);
+  mod.entries = mod.entries.filter(e => e.id !== entryId);
+  persistAndRerenderCategory();
+}
+
+async function persistAndRerenderCategory() {
+  renderCategoryPage();
+  const indicator = $('#catSaveIndicator');
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return;
+  indicator.textContent = 'Saving…';
+  const { error } = await sb.from('app_data').upsert({
+    user_id: user.id,
+    key: LEDGER_KEY,
+    value: ledgerData,
+    updated_at: new Date().toISOString()
+  });
+  indicator.textContent = error ? ('Save failed: ' + error.message) : 'Saved ✓';
+  if (!error) setTimeout(() => { if (indicator.textContent === 'Saved ✓') indicator.textContent = ''; }, 1500);
+}
+
+function toggleChecklistItem(modId, itemId) {
+  const mod = getCurrentCategory().modules.find(m => m.id === modId);
+  const item = mod.items.find(i => i.id === itemId);
+  item.done = !item.done;
+  persistAndRerenderCategory();
+}
+
+function addChecklistItem(modId) {
+  const input = $(`#add-item-${modId}`);
+  const text = input.value.trim();
+  if (!text) return;
+  const mod = getCurrentCategory().modules.find(m => m.id === modId);
+  mod.items.push({ id: `${modId}-${Date.now()}`, label: text, done: false });
+  persistAndRerenderCategory();
+}
+
+function addLogEntry(modId) {
+  const input = $(`#add-log-${modId}`);
+  const text = input.value.trim();
+  if (!text) return;
+  const mod = getCurrentCategory().modules.find(m => m.id === modId);
+  if (!mod.entries) mod.entries = [];
+  mod.entries.unshift({ id: `${modId}-${Date.now()}`, date: todayStr(), text });
+  persistAndRerenderCategory();
+}
+
+function deleteLogEntry(modId, entryId) {
+  const mod = getCurrentCategory().modules.find(m => m.id === modId);
+  mod.entries = mod.entries.filter(e => e.id !== entryId);
+  persistAndRerenderCategory();
+}
+
+function updateNumeric(modId, field, value) {
+  const num = Number(value);
+  const mod = getCurrentCategory().modules.find(m => m.id === modId);
+  mod[field] = isNaN(num) ? 0 : num;
+  persistAndRerenderCategory();
+}
+
+function renderCalStrip() {
+  const strip = $('#calStrip');
+  const today = new Date();
+  const dowLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - today.getDay());
+  let html = '';
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(startOfWeek);
+    d.setDate(startOfWeek.getDate() + i);
+    const isToday = d.toDateString() === today.toDateString();
+    html += `<div class="cal-day ${isToday ? 'is-today' : ''}">
+      <div class="dow">${dowLabels[d.getDay()]}</div>
+      <div class="dnum">${d.getDate()}</div>
+    </div>`;
+  }
+  strip.innerHTML = html;
+}
+
+const FITNESS_ROTATION = [null, 'day-a', 'day-b', 'day-c', 'day-d', 'day-a', 'day-b'];
+
+function nextIncompleteItem(mod) {
+  return (mod.items || []).find(i => !i.done);
+}
+
+function getTodaysTasks() {
+  const tasks = [];
+  const push = (cat, mod, tag) => {
+    const item = nextIncompleteItem(mod);
+    if (item) tasks.push({ catId: cat.id, modId: mod.id, itemId: item.id, label: item.label, tag });
+  };
+
+  const fitness = ledgerData.categories.find(c => c.id === 'fitness');
+  const todaysFitnessId = FITNESS_ROTATION[new Date().getDay()];
+  if (todaysFitnessId) {
+    const mod = fitness.modules.find(m => m.id === todaysFitnessId);
+    if (mod) push(fitness, mod, `Fitness — ${mod.title.split('—')[0].trim()}`);
+  }
+
+  const languages = ledgerData.categories.find(c => c.id === 'languages');
+  ['yoruba', 'igbo', 'french'].forEach(modId => {
+    const mod = languages.modules.find(m => m.id === modId);
+    if (mod) push(languages, mod, mod.title.split('—')[0].trim());
+  });
+
+  ledgerData.categories.forEach(cat => {
+    if (cat.id === 'fitness' || cat.id === 'languages') return;
+    cat.modules.filter(m => m.type === 'checklist').forEach(mod => push(cat, mod, cat.name));
+  });
+
+  return tasks;
+}
+
+function renderTaskList() {
+  const container = $('#taskList');
+  const all = getTodaysTasks();
+  const shown = all.slice(0, 8);
+  if (!shown.length) {
+    container.innerHTML = '<div style="font-size:14px; color:var(--forest); font-style:italic; font-weight:600; padding: 12px 0;">Everything\'s checked off. Nicely done.</div>';
+    return;
+  }
+  container.innerHTML = shown.map(t => `
+    <div class="task-item" onclick="completeTask('${t.catId}','${t.modId}','${t.itemId}')">
+      <div class="task-checkbox"></div>
+      <div><div class="task-label">${t.label}</div><span class="task-cat">${t.tag}</span></div>
+    </div>`).join('') + (all.length > shown.length ? `<div style="font-size:11px; color:var(--text-muted); margin-top:12px; font-family:'IBM Plex Mono',monospace; text-align:center; letter-spacing:0.05em;">+${all.length - shown.length} more waiting elsewhere</div>` : '');
+}
+
+async function completeTask(catId, modId, itemId) {
+  const mod = ledgerData.categories.find(c => c.id === catId).modules.find(m => m.id === modId);
+  const item = mod.items.find(i => i.id === itemId);
+  item.done = true;
+  renderTaskList();
+  await persistLedger();
+}
+
+function getDayOfYear() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  return Math.floor((now - start) / 86400000);
+}
+
+function renderQuote() {
+  const idx = getDayOfYear() % DAILY_QUOTES.length;
+  $('#quoteText').textContent = DAILY_QUOTES[idx];
+}
+
+function waterStatus(plant) {
+  if (!plant.lastWatered) return { label: 'Not watered yet', overdue: false };
+  const last = new Date(plant.lastWatered);
+  const due = new Date(last);
+  due.setDate(due.getDate() + (plant.wateringFrequencyDays || 7));
+  const now = new Date();
+  now.setHours(0,0,0,0);
+  const daysUntil = Math.round((due - now) / 86400000);
+  if (daysUntil < 0) return { label: `Overdue by ${-daysUntil}d`, overdue: true };
+  if (daysUntil === 0) return { label: 'Water today', overdue: true };
+  return { label: `Water in ${daysUntil}d`, overdue: false };
+}
+
+function renderPlantOfDay() {
+  const container = $('#plantOfDay');
+  const gardening = ledgerData.categories.find(c => c.id === 'gardening');
+  const tracker = gardening.modules.find(m => m.id === 'plant-tracker');
+  const plants = tracker.plants || [];
+
+  if (plants.length) {
+    const plant = plants[getDayOfYear() % plants.length];
+    const ws = waterStatus(plant);
+    const almanacMatch = PLANT_ALMANAC.find(p => p.name.toLowerCase() === plant.name.toLowerCase());
+    container.innerHTML = `
+      <div class="plant-name">${plant.name}</div>
+      ${almanacMatch ? `<div class="plant-meta">${almanacMatch.scientificName} · ${almanacMatch.type}</div>` : ''}
+      <div class="plant-meta" style="margin-top:6px; color:var(--terracotta); font-weight:700;">${plant.status} · ${ws.label}</div>
+      ${almanacMatch ? `<div class="plant-tip">${almanacMatch.fact}</div>` : '<div class="plant-tip" style="color:var(--text-muted);">No almanac match for this name yet.</div>'}
+    `;
+  } else {
+    const p = PLANT_ALMANAC[getDayOfYear() % PLANT_ALMANAC.length];
+    container.innerHTML = `
+      <div class="plant-name">${p.name}</div>
+      <div class="plant-meta">${p.scientificName} · ${p.type}</div>
+      <div class="plant-tip">${p.fact}</div>
+    `;
+  }
+}
+
+async function logout() {
+  await sb.auth.signOut();
+  document.body.classList.remove('home-mode');
+  $('#homeWrap').style.display = 'none';
+  $('#categoryPage').style.display = 'none';
+  currentCategoryId = null;
+  window.location.href = LOGIN_PAGE;
+}
+
+(async function checkExistingSession() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    window.location.href = LOGIN_PAGE;
+    return;
+  }
+  if (session.user.email?.toLowerCase() === PAGE_EMAILS.eto) {
+    enterApp();
+  } else if (PAGE_EMAILS.uggs.includes(session.user.email?.toLowerCase())) {
+    window.location.href = LOGIN_PAGE;
+  } else {
+    await sb.auth.signOut();
+  }
+})();
+</script>
+</body>
+</html>
