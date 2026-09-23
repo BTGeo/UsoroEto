@@ -355,11 +355,58 @@
   }
   
   .module-block { margin-bottom: 16px; padding: 20px; background: var(--cream); border-left: 4px solid var(--cat-accent, var(--terracotta)); }
-  .academic-dashboard h3 { margin: 14px 0 8px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
-  .academic-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
-  .academic-stat { flex: 1; min-width: 120px; padding: 12px; background: var(--parchment); border-top: 3px solid var(--cat-accent, var(--terracotta)); }
-  .academic-stat b, .academic-stat span { display: block; }
-  .academic-stat span, .muted-small { color: var(--text-muted); font-size: 11px; }
+  /* --- Academics dashboard --- */
+  .acad-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  .acad-pace-badge { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 5px 12px; border: 1px solid var(--gold-dim); background: var(--cream-dark); color: var(--text-muted); }
+  .acad-pace-badge.ahead { background: var(--forest); border-color: var(--forest); color: var(--cream); }
+  .acad-pace-badge.behind { background: var(--terracotta); border-color: var(--terracotta); color: var(--cream); }
+
+  .acad-banner { border: 2px solid var(--terracotta-dark); background: #f6e4de; padding: 12px 14px; margin-bottom: 18px; }
+  .acad-banner strong { display: block; font-family: 'Fraunces', serif; font-size: 14px; color: var(--terracotta-dark); margin-bottom: 3px; }
+  .acad-banner .muted-small { color: var(--terracotta-dark); opacity: 0.85; }
+
+  .acad-stats { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+  .academic-stat, .acad-stat { flex: 1; min-width: 120px; padding: 14px 12px; background: var(--cream-dark); border-top: 3px solid var(--cat-accent, var(--terracotta)); text-align: left; }
+  .academic-stat b, .acad-stat b { display: block; font-family: 'Fraunces', serif; font-size: 20px; font-weight: 900; color: var(--indigo-deep); line-height: 1.2; }
+  .academic-stat span, .acad-stat span { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-top: 4px; }
+
+  .acad-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 6px; }
+  .acad-card { background: var(--cream-dark); border: 1px solid var(--gold-dim); padding: 16px; }
+  .acad-card-title {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--indigo-deep); margin: 0 0 12px; padding-bottom: 8px;
+    border-bottom: 1px dashed var(--gold-dim);
+  }
+  .acad-card:first-child { grid-column: 1 / -1; }
+
+  .acad-field-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .acad-field { flex: 1; min-width: 110px; }
+  .acad-field label { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 4px; }
+  .acad-field input, .acad-field select { width: 100%; border: 1px solid var(--gold-dim); background: var(--cream); padding: 8px 10px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13.5px; outline: none; color: var(--text-main); }
+  .acad-field input:focus, .acad-field select:focus { border-color: var(--terracotta); background: #fff; }
+
+  .class-row { border: 1px solid var(--gold-dim); background: var(--cream); padding: 10px 12px; margin-bottom: 8px; display: flex; align-items: flex-start; gap: 10px; }
+  .class-row:last-of-type { margin-bottom: 0; }
+  .class-swatch { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+  .class-name { font-family: 'Fraunces', serif; font-weight: 700; font-size: 14.5px; color: var(--text-main); }
+  .class-progress-track { height: 5px; background: var(--cream-dark); margin-top: 6px; border: 1px solid var(--gold-dim); }
+  .class-progress-fill { height: 100%; background: var(--forest); }
+  .class-needed { display: inline-block; margin-top: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 700; color: var(--terracotta); }
+
+  .event-row { border-left: 4px solid var(--forest); background: var(--cream); padding: 8px 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .event-row:last-of-type { margin-bottom: 0; }
+  .event-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 14px; }
+  .event-meta { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--text-muted); margin-top: 2px; }
+  .event-type-tag { font-weight: 700; }
+
+  .acad-calc-row { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+  .acad-calc-row .acad-field { min-width: 100px; }
+  .acad-calc-btn { border: 2px solid var(--cat-accent, var(--terracotta)); background: var(--cream); color: var(--cat-accent, var(--terracotta)); font-family: 'IBM Plex Sans', sans-serif; font-weight: 700; font-size: 12.5px; padding: 0 16px; cursor: pointer; white-space: nowrap; }
+  .acad-calc-btn:hover { background: var(--cat-accent, var(--terracotta)); color: var(--cream); }
+  .acad-calc-result { margin-top: 10px; padding: 10px 12px; background: var(--cream); border: 1px dashed var(--gold-dim); font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--indigo-deep); font-weight: 600; min-height: 18px; }
+  .acad-calc-result:empty { display: none; }
+
+  .muted-small { color: var(--text-muted); font-size: 11px; }
   .module-title { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 900; margin-bottom: 14px; color: var(--indigo-deep); }
 
   .inline-add-row { display: flex; gap: 8px; margin-top: 14px; }
@@ -784,58 +831,119 @@ function renderAcademicDashboard(mod) {
   const classes = a.classes || [];
   const events = (a.events || []).slice().sort((x, y) => (x.date || '').localeCompare(y.date || ''));
   const today = new Date(); today.setHours(0, 0, 0, 0);
+  const todayIso = today.toISOString().slice(0, 10);
   const start = a.termStart ? new Date(a.termStart + 'T00:00:00') : null;
   const end = a.termEnd ? new Date(a.termEnd + 'T00:00:00') : null;
+
   let pace = 'Set term dates';
+  let paceClass = '';
   if (start && end && end > start) {
     const elapsed = Math.max(0, Math.min(1, (today - start) / (end - start)));
-    const completed = classes.length ? classes.reduce((sum, c) => sum + Math.min(1, (Number(c.completed) || 0) / Math.max(1, Number(c.total) || 1)), 0) / classes.length : 0;
-    pace = completed >= elapsed + .08 ? 'Ahead' : completed + .08 >= elapsed ? 'On Track' : 'Behind';
+    const completed = classes.length
+      ? classes.reduce((sum, c) => sum + Math.min(1, (Number(c.completed) || 0) / Math.max(1, Number(c.total) || 1)), 0) / classes.length
+      : 0;
+    if (completed >= elapsed + 0.08) { pace = 'Ahead'; paceClass = 'ahead'; }
+    else if (completed + 0.08 >= elapsed) { pace = 'On Track'; }
+    else { pace = 'Behind'; paceClass = 'behind'; }
   }
+
   const atRisk = classes.filter(c => Number(c.currentGrade) < Number(a.riskThreshold || 70));
+
   const classRows = classes.map(c => {
     const current = Number(c.currentGrade) || 0;
     const weight = Number(c.finalWeight) || 0;
     const target = Number(c.targetGrade) || 0;
-    const needed = weight > 0 ? (target - current * (1 - weight / 100)) / (weight / 100) : 0;
-    return `<div class="item-row" style="cursor:default;">
-      <div style="width:12px;height:12px;background:${c.color || '#2D5A27'};margin:4px 12px 0 0;flex:none;"></div>
-      <div style="flex:1"><strong>${c.name || 'Unnamed class'}</strong>
-        <div class="muted-small">${current.toFixed(1)}% current · ${Number(c.completed) || 0}/${Number(c.total) || 0} work complete${weight ? ` · ${Math.max(0, needed).toFixed(1)}% needed on final` : ''}</div>
+    const needed = weight > 0 ? (target - current * (1 - weight / 100)) / (weight / 100) : null;
+    const pct = Math.max(0, Math.min(100, Number(c.total) > 0 ? (Number(c.completed) / Number(c.total)) * 100 : 0));
+    return `<div class="class-row">
+      <div class="class-swatch" style="background:${c.color || '#2D5A27'};"></div>
+      <div style="flex:1;">
+        <div class="class-name">${c.name || 'Unnamed class'}</div>
+        <div class="muted-small">${current.toFixed(1)}% current · ${Number(c.completed) || 0}/${Number(c.total) || 0} work complete</div>
+        <div class="class-progress-track"><div class="class-progress-fill" style="width:${pct}%;"></div></div>
+        ${needed !== null ? `<span class="class-needed">${Math.max(0, needed).toFixed(1)}% needed on final</span>` : ''}
       </div>
       <button class="log-delete" onclick="deleteAcademicClass('${mod.id}','${c.id}')">×</button>
     </div>`;
   }).join('');
-  const eventRows = events.map(e => `<div class="item-row" style="cursor:default;">
-    <div style="flex:1"><strong>${e.title}</strong><div class="muted-small"><span style="color:${e.color || '#2D5A27'}">${e.type}</span> · ${e.date}${e.className ? ` · ${e.className}` : ''}</div></div>
-    <button class="log-delete" onclick="deleteAcademicEvent('${mod.id}','${e.id}')">×</button>
-  </div>`).join('');
+
+  const eventRows = events.map(e => `
+    <div class="event-row" style="border-left-color:${e.color || '#2D5A27'};">
+      <div>
+        <div class="event-title">${e.title}</div>
+        <div class="event-meta"><span class="event-type-tag" style="color:${e.color || '#2D5A27'};">${e.type}</span> · ${e.date}${e.className ? ` · ${e.className}` : ''}</div>
+      </div>
+      <button class="log-delete" onclick="deleteAcademicEvent('${mod.id}','${e.id}')">×</button>
+    </div>`).join('');
+
   return `<div class="module-block academic-dashboard">
-    <div class="module-title">Academic command center</div>
-    ${atRisk.length ? `<div style="border:2px solid #B94A3A;padding:12px;margin-bottom:14px;"><strong style="color:#B94A3A;">At-risk classes</strong><div class="muted-small">${atRisk.map(c => `${c.name} (${Number(c.currentGrade).toFixed(1)}%)`).join(' · ')}</div></div>` : ''}
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
-      <div class="academic-stat"><b>${pace}</b><span>Progress vs pace</span></div>
-      <div class="academic-stat"><b>${classes.length}</b><span>Classes</span></div>
-      <div class="academic-stat"><b>${events.filter(e => e.date >= today.toISOString().slice(0,10)).length}</b><span>Upcoming events</span></div>
+    <div class="acad-header-row">
+      <div class="module-title" style="margin-bottom:0;">Academic command center</div>
+      <span class="acad-pace-badge ${paceClass}">${pace}</span>
     </div>
-    <div class="academic-grid">
-      <section><h3>Term & risk settings</h3>
-        <div class="inline-add-row"><input type="date" id="acad-start-${mod.id}" value="${a.termStart || ''}"><input type="date" id="acad-end-${mod.id}" value="${a.termEnd || ''}"></div>
-        <label class="muted-small">At-risk threshold (%) <input type="number" id="acad-risk-${mod.id}" value="${a.riskThreshold || 70}" min="0" max="100" style="width:80px;"></label>
-        <button class="inline-add-btn" onclick="saveAcademicSettings('${mod.id}')">Save settings</button>
-      </section>
-      <section><h3>Classes</h3>${classRows || '<div class="placeholder-note">Add your first class.</div>'}
-        <div class="inline-add-row"><input id="acad-class-${mod.id}" placeholder="Class name"><input id="acad-grade-${mod.id}" type="number" placeholder="Current %" min="0" max="100"><button class="inline-add-btn" onclick="addAcademicClass('${mod.id}')">+</button></div>
-      </section>
+
+    ${atRisk.length ? `<div class="acad-banner">
+      <strong>At-risk classes</strong>
+      <div class="muted-small">${atRisk.map(c => `${c.name} (${Number(c.currentGrade).toFixed(1)}%)`).join(' · ')}</div>
+    </div>` : ''}
+
+    <div class="acad-stats">
+      <div class="acad-stat"><b>${classes.length}</b><span>Classes</span></div>
+      <div class="acad-stat"><b>${events.filter(e => e.date >= todayIso).length}</b><span>Upcoming events</span></div>
+      <div class="acad-stat"><b>${atRisk.length}</b><span>At risk</span></div>
     </div>
-    <section><h3>Color-coded planner</h3>${eventRows || '<div class="placeholder-note">Add assignments, exams, or personal events.</div>'}
-      <div class="inline-add-row"><input id="acad-event-${mod.id}" placeholder="Event title"><input id="acad-date-${mod.id}" type="date"><select id="acad-type-${mod.id}"><option>Assignment</option><option>Exam</option><option>Personal</option></select><button class="inline-add-btn" onclick="addAcademicEvent('${mod.id}')">+</button></div>
-    </section>
-    <section><h3>Grade calculator</h3>
-      <div class="inline-add-row"><input id="grade-current-${mod.id}" type="number" placeholder="Current grade %"><input id="grade-final-${mod.id}" type="number" placeholder="Final weight %"><input id="grade-target-${mod.id}" type="number" placeholder="Target grade %"><button class="inline-add-btn" onclick="calculateAcademicGrade('${mod.id}')">Calculate</button></div>
-      <div class="inline-add-row"><input id="grade-score-${mod.id}" type="number" placeholder="Hypothetical score %"><input id="grade-weight-${mod.id}" type="number" placeholder="Assignment weight %"><button class="inline-add-btn" onclick="projectAcademicGrade('${mod.id}')">Project score</button></div>
-      <div id="grade-result-${mod.id}" class="muted-small"></div>
-    </section>
+
+    <div class="acad-columns">
+      <div class="acad-card">
+        <div class="acad-card-title">Term &amp; risk settings</div>
+        <div class="acad-field-row">
+          <div class="acad-field"><label>Term start</label><input type="date" id="acad-start-${mod.id}" value="${a.termStart || ''}"></div>
+          <div class="acad-field"><label>Term end</label><input type="date" id="acad-end-${mod.id}" value="${a.termEnd || ''}"></div>
+          <div class="acad-field" style="max-width:120px;"><label>At-risk below (%)</label><input type="number" id="acad-risk-${mod.id}" value="${a.riskThreshold || 70}" min="0" max="100"></div>
+        </div>
+        <button class="acad-calc-btn" onclick="saveAcademicSettings('${mod.id}')">Save settings</button>
+      </div>
+
+      <div class="acad-card">
+        <div class="acad-card-title">Classes</div>
+        ${classRows || '<div class="placeholder-note">Add your first class below.</div>'}
+        <div class="acad-field-row" style="margin-top:12px;">
+          <div class="acad-field"><label>Class name</label><input id="acad-class-${mod.id}" placeholder="e.g. Organic Chemistry"></div>
+          <div class="acad-field" style="max-width:110px;"><label>Current %</label><input id="acad-grade-${mod.id}" type="number" placeholder="85" min="0" max="100"></div>
+        </div>
+        <button class="acad-calc-btn" onclick="addAcademicClass('${mod.id}')">+ Add class</button>
+      </div>
+
+      <div class="acad-card">
+        <div class="acad-card-title">Color-coded planner</div>
+        ${eventRows || '<div class="placeholder-note">Add assignments, exams, or personal events.</div>'}
+        <div class="acad-field-row" style="margin-top:12px;">
+          <div class="acad-field"><label>Event title</label><input id="acad-event-${mod.id}" placeholder="e.g. Midterm"></div>
+          <div class="acad-field" style="max-width:150px;"><label>Date</label><input id="acad-date-${mod.id}" type="date"></div>
+          <div class="acad-field" style="max-width:130px;"><label>Type</label>
+            <select id="acad-type-${mod.id}"><option>Assignment</option><option>Exam</option><option>Personal</option></select>
+          </div>
+        </div>
+        <button class="acad-calc-btn" onclick="addAcademicEvent('${mod.id}')">+ Add event</button>
+      </div>
+
+      <div class="acad-card">
+        <div class="acad-card-title">Grade calculator</div>
+        <div class="acad-calc-row">
+          <div class="acad-field"><label>Current grade %</label><input id="grade-current-${mod.id}" type="number"></div>
+          <div class="acad-field"><label>Final weight %</label><input id="grade-final-${mod.id}" type="number"></div>
+          <div class="acad-field"><label>Target grade %</label><input id="grade-target-${mod.id}" type="number"></div>
+        </div>
+        <button class="acad-calc-btn" onclick="calculateAcademicGrade('${mod.id}')">Calculate needed score</button>
+        <div class="muted-small" style="margin-top:10px;">Uses the current grade above for both calculators.</div>
+        <div class="acad-calc-row" style="margin-top:10px;">
+          <div class="acad-field"><label>Hypothetical score %</label><input id="grade-score-${mod.id}" type="number"></div>
+          <div class="acad-field"><label>Assignment weight %</label><input id="grade-weight-${mod.id}" type="number"></div>
+        </div>
+        <button class="acad-calc-btn" onclick="projectAcademicGrade('${mod.id}')">Project new grade</button>
+        <div id="grade-result-${mod.id}" class="acad-calc-result"></div>
+      </div>
+    </div>
   </div>`;
 }
 
