@@ -355,6 +355,11 @@
   }
   
   .module-block { margin-bottom: 16px; padding: 20px; background: var(--cream); border-left: 4px solid var(--cat-accent, var(--terracotta)); }
+  .academic-dashboard h3 { margin: 14px 0 8px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+  .academic-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .academic-stat { flex: 1; min-width: 120px; padding: 12px; background: var(--parchment); border-top: 3px solid var(--cat-accent, var(--terracotta)); }
+  .academic-stat b, .academic-stat span { display: block; }
+  .academic-stat span, .muted-small { color: var(--text-muted); font-size: 11px; }
   .module-title { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 900; margin-bottom: 14px; color: var(--indigo-deep); }
 
   .inline-add-row { display: flex; gap: 8px; margin-top: 14px; }
@@ -604,6 +609,9 @@ const DEFAULT_DATA = {
       { id: 'budget-log', title: 'Budget Log', type: 'log', entries: [] }
     ]},
     { id: 'academics', name: 'Academics', modules: [
+      { id: 'academic-dashboard', title: 'Academic Planner & Progress', type: 'academicDashboard', academic: {
+        termStart: '', termEnd: '', riskThreshold: 70, classes: [], events: []
+      }},
       { id: 'courses', title: 'Courses', type: 'checklist', items: [] },
       { id: 'deadlines', title: 'Assignments, Exams & Projects', type: 'deadlines', entries: [] },
       { id: 'study-log', title: 'Study Log', type: 'log', entries: [] }
@@ -676,6 +684,12 @@ async function loadLedger() {
     ledgerData = data.value;
   } else {
     ledgerData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    await persistLedger();
+  }
+  const academics = ledgerData.categories.find(c => c.id === 'academics');
+  if (academics && !academics.modules.some(m => m.type === 'academicDashboard')) {
+    academics.modules.unshift({ id: 'academic-dashboard', title: 'Academic Planner & Progress', type: 'academicDashboard',
+      academic: { termStart: '', termEnd: '', riskThreshold: 70, classes: [], events: [] } });
     await persistLedger();
   }
 
@@ -761,7 +775,108 @@ function renderModuleHTML(mod) {
   if (mod.type === 'deadlines') return renderDeadlinesModule(mod);
   if (mod.type === 'paycalc') return renderPaycalcModule(mod);
   if (mod.type === 'plants') return renderPlantsModule(mod);
+  if (mod.type === 'academicDashboard') return renderAcademicDashboard(mod);
   return '';
+}
+
+function renderAcademicDashboard(mod) {
+  const a = mod.academic || (mod.academic = { termStart: '', termEnd: '', riskThreshold: 70, classes: [], events: [] });
+  const classes = a.classes || [];
+  const events = (a.events || []).slice().sort((x, y) => (x.date || '').localeCompare(y.date || ''));
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const start = a.termStart ? new Date(a.termStart + 'T00:00:00') : null;
+  const end = a.termEnd ? new Date(a.termEnd + 'T00:00:00') : null;
+  let pace = 'Set term dates';
+  if (start && end && end > start) {
+    const elapsed = Math.max(0, Math.min(1, (today - start) / (end - start)));
+    const completed = classes.length ? classes.reduce((sum, c) => sum + Math.min(1, (Number(c.completed) || 0) / Math.max(1, Number(c.total) || 1)), 0) / classes.length : 0;
+    pace = completed >= elapsed + .08 ? 'Ahead' : completed + .08 >= elapsed ? 'On Track' : 'Behind';
+  }
+  const atRisk = classes.filter(c => Number(c.currentGrade) < Number(a.riskThreshold || 70));
+  const classRows = classes.map(c => {
+    const current = Number(c.currentGrade) || 0;
+    const weight = Number(c.finalWeight) || 0;
+    const target = Number(c.targetGrade) || 0;
+    const needed = weight > 0 ? (target - current * (1 - weight / 100)) / (weight / 100) : 0;
+    return `<div class="item-row" style="cursor:default;">
+      <div style="width:12px;height:12px;background:${c.color || '#2D5A27'};margin:4px 12px 0 0;flex:none;"></div>
+      <div style="flex:1"><strong>${c.name || 'Unnamed class'}</strong>
+        <div class="muted-small">${current.toFixed(1)}% current · ${Number(c.completed) || 0}/${Number(c.total) || 0} work complete${weight ? ` · ${Math.max(0, needed).toFixed(1)}% needed on final` : ''}</div>
+      </div>
+      <button class="log-delete" onclick="deleteAcademicClass('${mod.id}','${c.id}')">×</button>
+    </div>`;
+  }).join('');
+  const eventRows = events.map(e => `<div class="item-row" style="cursor:default;">
+    <div style="flex:1"><strong>${e.title}</strong><div class="muted-small"><span style="color:${e.color || '#2D5A27'}">${e.type}</span> · ${e.date}${e.className ? ` · ${e.className}` : ''}</div></div>
+    <button class="log-delete" onclick="deleteAcademicEvent('${mod.id}','${e.id}')">×</button>
+  </div>`).join('');
+  return `<div class="module-block academic-dashboard">
+    <div class="module-title">Academic command center</div>
+    ${atRisk.length ? `<div style="border:2px solid #B94A3A;padding:12px;margin-bottom:14px;"><strong style="color:#B94A3A;">At-risk classes</strong><div class="muted-small">${atRisk.map(c => `${c.name} (${Number(c.currentGrade).toFixed(1)}%)`).join(' · ')}</div></div>` : ''}
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+      <div class="academic-stat"><b>${pace}</b><span>Progress vs pace</span></div>
+      <div class="academic-stat"><b>${classes.length}</b><span>Classes</span></div>
+      <div class="academic-stat"><b>${events.filter(e => e.date >= today.toISOString().slice(0,10)).length}</b><span>Upcoming events</span></div>
+    </div>
+    <div class="academic-grid">
+      <section><h3>Term & risk settings</h3>
+        <div class="inline-add-row"><input type="date" id="acad-start-${mod.id}" value="${a.termStart || ''}"><input type="date" id="acad-end-${mod.id}" value="${a.termEnd || ''}"></div>
+        <label class="muted-small">At-risk threshold (%) <input type="number" id="acad-risk-${mod.id}" value="${a.riskThreshold || 70}" min="0" max="100" style="width:80px;"></label>
+        <button class="inline-add-btn" onclick="saveAcademicSettings('${mod.id}')">Save settings</button>
+      </section>
+      <section><h3>Classes</h3>${classRows || '<div class="placeholder-note">Add your first class.</div>'}
+        <div class="inline-add-row"><input id="acad-class-${mod.id}" placeholder="Class name"><input id="acad-grade-${mod.id}" type="number" placeholder="Current %" min="0" max="100"><button class="inline-add-btn" onclick="addAcademicClass('${mod.id}')">+</button></div>
+      </section>
+    </div>
+    <section><h3>Color-coded planner</h3>${eventRows || '<div class="placeholder-note">Add assignments, exams, or personal events.</div>'}
+      <div class="inline-add-row"><input id="acad-event-${mod.id}" placeholder="Event title"><input id="acad-date-${mod.id}" type="date"><select id="acad-type-${mod.id}"><option>Assignment</option><option>Exam</option><option>Personal</option></select><button class="inline-add-btn" onclick="addAcademicEvent('${mod.id}')">+</button></div>
+    </section>
+    <section><h3>Grade calculator</h3>
+      <div class="inline-add-row"><input id="grade-current-${mod.id}" type="number" placeholder="Current grade %"><input id="grade-final-${mod.id}" type="number" placeholder="Final weight %"><input id="grade-target-${mod.id}" type="number" placeholder="Target grade %"><button class="inline-add-btn" onclick="calculateAcademicGrade('${mod.id}')">Calculate</button></div>
+      <div class="inline-add-row"><input id="grade-score-${mod.id}" type="number" placeholder="Hypothetical score %"><input id="grade-weight-${mod.id}" type="number" placeholder="Assignment weight %"><button class="inline-add-btn" onclick="projectAcademicGrade('${mod.id}')">Project score</button></div>
+      <div id="grade-result-${mod.id}" class="muted-small"></div>
+    </section>
+  </div>`;
+}
+
+function getAcademicModule(modId) {
+  return getCurrentCategory().modules.find(m => m.id === modId);
+}
+function saveAcademicSettings(modId) {
+  const m = getAcademicModule(modId), a = m.academic;
+  a.termStart = $(`#acad-start-${modId}`).value; a.termEnd = $(`#acad-end-${modId}`).value;
+  a.riskThreshold = Number($(`#acad-risk-${modId}`).value) || 70; persistAndRerenderCategory();
+}
+function addAcademicClass(modId) {
+  const m = getAcademicModule(modId), name = $(`#acad-class-${modId}`).value.trim();
+  if (!name) return;
+  m.academic.classes.push({ id: `class-${Date.now()}`, name, currentGrade: Number($(`#acad-grade-${modId}`).value) || 0, completed: 0, total: 1, color: CATEGORY_COLORS.academics });
+  persistAndRerenderCategory();
+}
+function deleteAcademicClass(modId, id) {
+  const m = getAcademicModule(modId); m.academic.classes = m.academic.classes.filter(c => c.id !== id); persistAndRerenderCategory();
+}
+function addAcademicEvent(modId) {
+  const m = getAcademicModule(modId), title = $(`#acad-event-${modId}`).value.trim(), date = $(`#acad-date-${modId}`).value;
+  if (!title || !date) return;
+  const type = $(`#acad-type-${modId}`).value;
+  m.academic.events.push({ id: `event-${Date.now()}`, title, date, type, color: type === 'Exam' ? '#8B3A62' : type === 'Personal' ? '#B57928' : CATEGORY_COLORS.academics });
+  persistAndRerenderCategory();
+}
+function deleteAcademicEvent(modId, id) {
+  const m = getAcademicModule(modId); m.academic.events = m.academic.events.filter(e => e.id !== id); persistAndRerenderCategory();
+}
+function calculateAcademicGrade(modId) {
+  const current = Number($(`#grade-current-${modId}`).value), weight = Number($(`#grade-final-${modId}`).value), target = Number($(`#grade-target-${modId}`).value);
+  const result = $(`#grade-result-${modId}`);
+  if (!Number.isFinite(current) || !Number.isFinite(weight) || !Number.isFinite(target) || weight <= 0) { result.textContent = 'Enter current grade, final weight, and target grade.'; return; }
+  result.textContent = `You need ${((target - current * (1 - weight / 100)) / (weight / 100)).toFixed(1)}% on the final to reach ${target}%.`;
+}
+function projectAcademicGrade(modId) {
+  const current = Number($(`#grade-current-${modId}`).value), score = Number($(`#grade-score-${modId}`).value), weight = Number($(`#grade-weight-${modId}`).value);
+  const result = $(`#grade-result-${modId}`);
+  if (![current, score, weight].every(Number.isFinite) || weight < 0 || weight > 100) { result.textContent = 'Enter current grade, hypothetical score, and assignment weight.'; return; }
+  result.textContent = `Projected grade: ${(current * (1 - weight / 100) + score * (weight / 100)).toFixed(1)}%.`;
 }
 
 function renderChecklistModule(mod) {
